@@ -3,63 +3,253 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DSA Visualizer - Home</title>
+  <title>DSA Visualizer</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .page { display: none; }
+    .page.active { display: block; }
+  </style>
 </head>
 <body>
   <!-- Navbar -->
   <header class="navbar">
-  <div class="brand">💻 DSA Visualizer</div>
-  <nav class="nav-links">
-    <a href="index.html">Home</a>
-    <a href="visualizer.html" class="active">Algorithms</a>
-    <a href="about.html">About</a>
-  </nav>
-</header>
+    <div class="brand">💻 DSA Visualizer</div>
+    <nav class="nav-links">
+      <a href="#" onclick="showPage('home')" id="home-link">Home</a>
+      <a href="#" onclick="showPage('algorithms')" id="algorithms-link">Algorithms</a>
+      <a href="#" onclick="showPage('about')" id="about-link">About</a>
+    </nav>
+  </header>
 
+  <!-- Home Page Content -->
+  <div id="home" class="page active">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Master Data Structures & Algorithms Visually</h1>
+        <p>Interactive animations to help you understand sorting, searching, trees, and graph algorithms in an intuitive way.</p>
+        <a href="#" onclick="showPage('algorithms')" class="btn">Start Exploring →</a>
+      </div>
+    </section>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1>Master Data Structures & Algorithms Visually</h1>
-      <p>Interactive animations to help you understand sorting, searching, trees, and graph algorithms in an intuitive way.</p>
-      <a href="sorting.html" class="btn">Start Exploring →</a>
+    <!-- Features Section -->
+    <section class="features">
+      <h2>What You Can Learn</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>🔄 Sorting</h3>
+          <p>Visualize Bubble, Selection, Insertion, Merge, Quick, and Heap Sort step by step with animations.</p>
+        </div>
+        <div class="feature-card">
+          <h3>🔍 Searching</h3>
+          <p>Understand how Linear and Binary Search work with visual comparisons on arrays.</p>
+        </div>
+        <div class="feature-card">
+          <h3>🌳 Trees</h3>
+          <p>Explore Binary Search Trees, AVL, and different traversals with live node diagrams.</p>
+        </div>
+        <div class="feature-card">
+          <h3>🕸️ Graphs</h3>
+          <p>Visualize BFS, DFS, Dijkstra’s, and more on a grid/canvas-based graph renderer.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta">
+      <h2>Ready to start your DSA journey?</h2>
+      <p>Choose a topic and begin exploring algorithms interactively.</p>
+      <a href="#" onclick="showPage('algorithms')" class="btn">Get Started</a>
+    </section>
+  </div>
+
+  <!-- Algorithms Page Content -->
+  <div id="algorithms" class="page">
+    <div class="layout">
+      <!-- Left Sidebar -->
+      <aside class="sidebar">
+        <h3>Algorithm Categories</h3>
+        <div class="cat">
+          <div class="cat-title">Sorting</div>
+          <ul>
+            <li onclick="selectAlgorithm('bubble')">Bubble Sort</li>
+            <li onclick="selectAlgorithm('selection')">Selection Sort</li>
+            <li onclick="selectAlgorithm('insertion')">Insertion Sort</li>
+            <li onclick="selectAlgorithm('merge')">Merge Sort</li>
+            <li onclick="selectAlgorithm('quick')">Quick Sort</li>
+            <li onclick="selectAlgorithm('heap')">Heap Sort</li>
+          </ul>
+        </div>
+        <div class="cat">
+          <div class="cat-title">Searching</div>
+          <ul>
+            <li onclick="selectAlgorithm('linear')">Linear Search</li>
+            <li onclick="selectAlgorithm('binary')">Binary Search</li>
+          </ul>
+        </div>
+        <div class="cat">
+          <div class="cat-title">Trees</div>
+          <ul>
+            <li onclick="selectAlgorithm('bst_in')">BST — Inorder</li>
+            <li onclick="selectAlgorithm('bst_pre')">BST — Preorder</li>
+            <li onclick="selectAlgorithm('bst_post')">BST — Postorder</li>
+          </ul>
+        </div>
+        <div class="cat">
+          <div class="cat-title">Graphs</div>
+          <ul>
+            <li onclick="selectAlgorithm('bfs')">BFS (Grid)</li>
+            <li onclick="selectAlgorithm('dfs')">DFS (Grid)</li>
+            <li onclick="selectAlgorithm('dijkstra')">Dijkstra (Grid)</li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Center: Controls + Canvas -->
+      <main class="main">
+        <div class="controls">
+          <div class="row">
+            <div class="pill">Selected: <span id="algoName">—</span></div>
+            <input id="arrayInput" class="input" placeholder="Enter array e.g. 64,34,25,12"/>
+            <input id="targetInput" class="input small" placeholder="Target (searching)" />
+            <label class="size">Rows
+              <input id="rows" type="range" min="8" max="30" value="16"/>
+            </label>
+            <label class="size">Cols
+              <input id="cols" type="range" min="12" max="50" value="28"/>
+            </label>
+            <label class="size">Walls
+              <input id="walls" type="range" min="0" max="60" value="25"/>
+            </label>
+            <button class="btn" onclick="generateForCurrent()">🎲 Generate</button>
+            <label class="speed">Speed
+              <input id="speed" type="range" min="30" max="1500" value="250" oninput="updateSpeed(this.value)"/>
+            </label>
+            <button class="btn play" onclick="play()">▶ Play</button>
+            <button class="btn" onclick="pause()">⏸ Pause</button>
+            <button class="btn" onclick="step()">⏭ Step</button>
+            <button class="btn danger" onclick="resetVis()">⏹ Reset</button>
+          </div>
+        </div>
+        <div id="canvas" class="canvas">
+          <div class="empty">
+            <div class="play-icon">▶</div>
+            <div class="empty-title">Ready to Visualize</div>
+            <div class="empty-sub">Pick an algorithm, then Generate or enter input.</div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Right Sidebar: Details -->
+      <aside class="panel">
+        <div class="card">
+          <div class="card-title">Current Step</div>
+          <div id="stepText" class="card-body">Select an algorithm to begin.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Pseudocode</div>
+          <pre id="pseudo" class="code"></pre>
+        </div>
+        <div class="card">
+          <div class="card-title">Complexity</div>
+          <ul class="stats">
+            <li><span>Best:</span> <b id="best">—</b></li>
+            <li><span>Average:</span> <b id="avg">—</b></li>
+            <li><span>Worst:</span> <b id="worst">—</b></li>
+            <li><span>Space:</span> <b id="space">—</b></li>
+          </ul>
+        </div>
+        <div class="legend card">
+          <div class="card-title">Legend</div>
+          <div class="legend-row"><span class="box hlA"></span> Compare / Visit</div>
+          <div class="legend-row"><span class="box hlB"></span> Pivot / Frontier</div>
+          <div class="legend-row"><span class="box sorted"></span> Fixed / Path</div>
+        </div>
+      </aside>
     </div>
-  </section>
+  </div>
 
-  <!-- Features Section -->
-  <section class="features">
-    <h2>What You Can Learn</h2>
-    <div class="feature-grid">
-      <div class="feature-card">
-        <h3>🔄 Sorting</h3>
-        <p>Visualize Bubble, Selection, Insertion, Merge, Quick, and Heap Sort step by step with animations.</p>
+  <!-- About Page Content -->
+  <div id="about" class="page">
+    <section class="about">
+      <div class="container">
+        <h1>About This Project</h1>
+        <p>
+          The <strong>DSA Visualizer</strong> is an interactive web application designed to help students 
+          and enthusiasts understand <em>Data Structures and Algorithms</em> through visualizations.  
+          Instead of just reading code, you can <b>see algorithms in action</b> — step by step!
+        </p>
+        <h2>✨ Features</h2>
+        <ul>
+          <li>Sorting Algorithms – Bubble, Insertion, Selection, Merge, Quick, Heap</li>
+          <li>Searching Algorithms – Linear Search, Binary Search</li>
+          <li>Binary Search Trees – Insertion, Deletion, Traversals (Inorder, Preorder, Postorder)</li>
+          <li>Graph Algorithms – BFS, DFS, Dijkstra (with canvas/grid visualization)</li>
+        </ul>
+        <h2>📖 Purpose</h2>
+        <p>
+          This project was built as part of my <b>3rd Semester</b> coursework.  
+          The goal is to make learning DSA more engaging by providing <b>interactive animations</b> 
+          that help students understand how algorithms work behind the scenes.
+        </p>
+        <h2>👨‍💻 About Me</h2>
+        <p>
+          Hi, I’m <b>Charan Chepala</b>, an <b>AI & Web Developer</b> passionate about creating 
+          intelligent systems and interactive applications.  
+          I specialize in <em>AI development, full-stack web applications, and user-focused design</em>.  
+          My mission is to build tools that make technology more useful and accessible.
+        </p>
+        <h2>🎓 Education</h2>
+        <ul>
+          <li><b>Vel Tech University</b> – B.Tech CSE (2021–2025), CGPA: 7.5</li>
+          <li><b>Ascent Junior College</b> – MPC, 86% (2019–2021)</li>
+          <li><b>Vignan Vidyalayam High School</b> – 10th, 85% (2019)</li>
+        </ul>
+        <h2>🚀 Projects</h2>
+        <ul>
+          <li><b>DSA Visualizer (2025)</b> – Interactive visualization tool for algorithms (this project).</li>
+          <li><b>Sentiment Analysis (2024)</b> – Twitter dataset analysis using NLP techniques.</li>
+          <li><b>Music Recommendation Chatbot (2024)</b> – AI chatbot that suggests music based on user preferences.</li>
+          <li><b>Courier Management System (2023)</b> – Cargo office software for bookings, deliveries, and reports.</li>
+          <li><b>AI-Powered Assistants</b> – Chatbots and virtual healthcare tools integrating NLP + ML.</li>
+          <li><b>Web Applications</b> – Portfolio websites, weather apps, and creative UI projects.</li>
+        </ul>
+        <h2>🛠️ Technical Skills</h2>
+        <p>
+          <b>Languages:</b> Python, C, C++, JavaScript, SQL <br>
+          <b>Frameworks:</b> ReactJS, FastAPI, Unreal Engine <br>
+          <b>Tools:</b> VS Code, Figma, Google Colab, GitHub  
+        </p>
+        <h2>🏆 Achievements</h2>
+        <p>
+          • 3rd Position in <b>“Senior” level of the International Robotronics Competition</b> at Indo German Advanced Technology.  
+        </p>
+        <h2>📌 Connect with Me</h2>
+        <ul class="contact-links">
+          <li>🌐 <a href="https://charan-ai-web-craft.lovable.app" target="_blank">Portfolio</a></li>
+          <li>💻 <a href="https://github.com/Cherrythecodz" target="_blank">GitHub</a></li>
+          <li>🔗 <a href="https://www.linkedin.com/in/charan-chepala-098b36266" target="_blank">LinkedIn</a></li>
+          <li>📧 <a href="mailto:charanchepala42@gmail.com">charanchepala42@gmail.com</a></li>
+          <li>📱 <a href="tel:+918333846979">+91 83338 46979</a></li>
+        </ul>
       </div>
-      <div class="feature-card">
-        <h3>🔍 Searching</h3>
-        <p>Understand how Linear and Binary Search work with visual comparisons on arrays.</p>
-      </div>
-      <div class="feature-card">
-        <h3>🌳 Trees</h3>
-        <p>Explore Binary Search Trees, AVL, and different traversals with live node diagrams.</p>
-      </div>
-      <div class="feature-card">
-        <h3>🕸️ Graphs</h3>
-        <p>Visualize BFS, DFS, Dijkstra’s, and more on a grid/canvas-based graph renderer.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Call to Action -->
-  <section class="cta">
-    <h2>Ready to start your DSA journey?</h2>
-    <p>Choose a topic and begin exploring algorithms interactively.</p>
-    <a href="sorting.html" class="btn">Get Started</a>
-  </section>
+    </section>
+  </div>
 
   <!-- Footer -->
   <footer>
-    <p>© 2025 DSA Visualizer | Built with ❤️ using HTML, CSS & JavaScript</p>
+    <p>© 2025 DSA Visualizer | Built with ❤️ by Charan Chepala</p>
   </footer>
+
+  <script>
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
+      document.getElementById(pageId + '-link').classList.add('active');
+    }
+    showPage('home');
+  </script>
+  <script src="script.js"></script>
 </body>
 </html>
